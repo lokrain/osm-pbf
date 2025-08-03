@@ -1,0 +1,10 @@
+pub use crate::blocks::primitives::block::PrimitiveBlock;
+pub use crate::blocks::primitives::changeset::ChangeSet;
+pub use crate::blocks::primitives::dense_info::DenseInfo;
+pub use crate::blocks::primitives::dense_nodes::DenseNodes;
+pub use crate::blocks::primitives::group::PrimitiveGroup;
+pub use crate::blocks::primitives::info::Info;
+pub use crate::blocks::primitives::member_type::MemberType;
+pub use crate::blocks::primitives::node::Node;
+pub use crate::blocks::primitives::relation::Relation;
+pub use crate::blocks::primitives::way::Way;

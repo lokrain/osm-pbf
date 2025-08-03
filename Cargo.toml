@@ -1,0 +1,25 @@
+[package]
+name = "osm-pbf"
+version = "0.1.0"
+edition = "2024"
+authors = ["Dimitar Isusov <lokrain@gmail.com>"]
+
+[lib]
+crate-type = ["lib"]
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1.0.219", features = ["derive"] }
+url = { version = "2.5.4", features = ["serde"] }
+# For binary data handling and streams
+bytes = "1.8.0"
+# For reading from various IO sources
+tokio = { version = "1.41.1", features = ["io-util"], optional = true }
+# For error handling
+thiserror = "2.0.7"
+# For parallel processing
+rayon = "1.10.0"
+
+[features]
+default = []
+async = ["tokio"]
