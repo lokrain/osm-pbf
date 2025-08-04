@@ -1,5 +1,6 @@
 /// Dense version of Info for bulk node storage.
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Default)]
 pub struct DenseInfo {
     /// Delta-encoded versions
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -26,15 +27,4 @@ pub struct DenseInfo {
     pub visible: Vec<bool>,
 }
 
-impl Default for DenseInfo {
-    fn default() -> Self {
-        Self {
-            version: Vec::new(),
-            timestamp: Vec::new(),
-            changeset: Vec::new(),
-            uid: Vec::new(),
-            user_sid: Vec::new(),
-            visible: Vec::new(),
-        }
-    }
-}
+

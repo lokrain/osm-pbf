@@ -1,0 +1,161 @@
+# nextest configuration for osm-pbf enterprise testing
+# Optimized for performance testing and comprehensive coverage
+
+[profile.default]
+# Default profile for standard CI/development testing
+retries = 2
+failure-output = "immediate"
+success-output = "never"
+
+# Test execution configuration
+max-fail = 10
+fail-fast = false
+
+# Performance optimizations
+test-threads = "num-cpus"
+show-output = false
+slow-timeout = { period = "60s", terminate-after = 3 }
+leak-timeout = "100ms"
+
+[profile.ci]
+# Profile optimized for CI/CD pipelines
+retries = 3
+failure-output = "immediate-final"
+success-output = "never"
+
+# Stricter CI requirements
+max-fail = 5
+fail-fast = true
+test-threads = 4
+
+# Timeout configuration for enterprise testing
+slow-timeout = { period = "30s", terminate-after = 2 }
+
+[profile.performance]
+# Profile specifically for performance testing and benchmarking
+retries = 1
+failure-output = "final"
+success-output = "final"
+
+# Performance testing configuration
+max-fail = 1
+fail-fast = true
+test-threads = 1
+
+# Extended timeouts for performance tests
+slow-timeout = { period = "300s", terminate-after = 1 }
+
+# Performance test specific settings
+show-output = true
+
+[profile.coverage]
+# Profile for comprehensive test coverage analysis
+retries = 1
+failure-output = "immediate"
+success-output = "never"
+
+# Coverage optimizations
+max-fail = 1
+fail-fast = false
+test-threads = "num-cpus"
+
+[test-groups]
+# Group performance-critical tests for focused execution
+performance = [
+    "test(enterprise_header_performance_under_load)",
+    "test(real_time_bbox_operations_performance)",
+    "test(high_throughput_timestamp_validation)",
+    "test(zero_boilerplate_streaming_performance)",
+    "test(parallel_processing_scalability)",
+    "test(zero_copy_memory_mapped_access)",
+    "test(parallel_memory_mapped_performance)",
+    "test(complete_planetary_osm_workflow)",
+]
+
+# Group memory and resource tests
+memory = [
+    "test(memory_efficient_header_processing)",
+    "test(memory_efficient_streaming)",
+    "test(memory_efficient_blob_processing)",
+]
+
+# Group concurrency and threading tests
+concurrency = [
+    "test(concurrent_header_processing_performance)",
+    "test(parallel_processing_scalability)",
+    "test(parallel_memory_mapped_performance)",
+    "test(real_time_gis_integration_streaming)",
+]
+
+# Group validation and reliability tests
+validation = [
+    "test(distributed_system_serialization_performance)",
+    "test(enterprise_filtering_performance)",
+    "test(fault_tolerant_memory_mapping)",
+    "test(enterprise_data_validation_workflow)",
+    "test(fault_tolerant_processing_workflow)",
+]
+
+# Group cross-platform compatibility tests
+compatibility = [
+    "test(cross_platform_compatibility_performance)",
+    "test(composable_pipeline_performance)",
+]
+
+# Test filtering and grouping with performance focus
+[[profile.default.overrides]]
+# Special handling for performance-sensitive tests
+filter = "test(performance)"
+slow-timeout = { period = "180s", terminate-after = 2 }
+retries = 1
+
+[[profile.default.overrides]]
+# Special handling for memory tests with extended monitoring
+filter = "test(memory)"
+slow-timeout = { period = "240s", terminate-after = 1 }
+retries = 2
+
+[[profile.default.overrides]]
+# Special handling for concurrency tests
+filter = "test(concurrency)"
+test-threads = "num-cpus"
+slow-timeout = { period = "200s", terminate-after = 2 }
+
+[[profile.default.overrides]]
+# Unit tests should be fast
+filter = "test(unit)"
+slow-timeout = { period = "30s", terminate-after = 2 }
+retries = 3
+
+# Integration tests get more time for enterprise workflows
+[[profile.default.overrides]]
+filter = "test(integration)"
+slow-timeout = { period = "300s", terminate-after = 1 }
+
+[[profile.performance.overrides]]
+# Performance profile overrides for specific test categories
+filter = "test(enterprise_header_performance_under_load)"
+slow-timeout = { period = "60s", terminate-after = 1 }
+
+[[profile.performance.overrides]]
+filter = "test(complete_planetary_osm_workflow)"
+slow-timeout = { period = "600s", terminate-after = 1 }
+
+[[profile.performance.overrides]]
+filter = "test(parallel_processing_scalability)"
+test-threads = "num-cpus"
+
+# Environment variables for performance testing
+[env]
+# Rust performance optimizations
+RUST_BACKTRACE = "0"
+RUST_LOG = "error"
+
+# OSM-specific performance settings
+OSM_PBF_BUFFER_SIZE = "65536"
+OSM_PBF_PARALLEL_CHUNKS = "auto"
+OSM_PBF_MEMORY_LIMIT = "1GB"
+
+# Testing environment configuration
+NEXTEST_PROFILE = "default"
+CARGO_INCREMENTAL = "0"

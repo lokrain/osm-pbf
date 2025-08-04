@@ -113,7 +113,7 @@ impl<R: Read + Seek> Reader<R> {
                 Ok(None) => continue,
                 Err(e) => {
                     stats.errors_encountered += 1;
-                    eprintln!("Warning: Error processing blob: {}", e);
+                    eprintln!("Warning: Error processing blob: {e}");
                     continue;
                 }
             };
@@ -133,9 +133,7 @@ impl<R: Read + Seek> Reader<R> {
                 
                 stats.elements_processed += 1;
                 
-                if let Err(e) = processor(element) {
-                    return Err(e);
-                }
+                processor(element)?
             }
         }
         
@@ -179,7 +177,7 @@ impl<R: Read + Seek> Reader<R> {
                 Ok(None) => continue,
                 Err(e) => {
                     stats.errors_encountered += 1;
-                    eprintln!("Warning: Error processing blob: {}", e);
+                    eprintln!("Warning: Error processing blob: {e}");
                     continue;
                 }
             };
@@ -199,9 +197,7 @@ impl<R: Read + Seek> Reader<R> {
                 
                 stats.elements_processed += 1;
                 
-                if let Err(e) = processor(element) {
-                    return Err(e);
-                }
+                processor(element)?
             }
         }
         
@@ -282,7 +278,7 @@ impl<R: Read + Seek> Reader<R> {
             rayon::ThreadPoolBuilder::new()
                 .num_threads(num_threads)
                 .build_global()
-                .map_err(|e| BlobError::InvalidFormat(format!("Failed to configure thread pool: {}", e)))?;
+                .map_err(|e| BlobError::InvalidFormat(format!("Failed to configure thread pool: {e}")))?;
         }
 
         // For now, we'll do sequential processing and return the identity value

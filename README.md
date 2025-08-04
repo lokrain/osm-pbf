@@ -5,16 +5,19 @@ A Rust library for reading and processing OpenStreetMap PBF (Protocol Buffer For
 ## Features
 
 ### 🚀 High-Level Zero-Boilerplate API
+
 - **Reader**: One-liner access to OSM elements with streaming and parallel processing
 - **Element Filtering**: Efficient filtering by type, ID ranges, and tags
 - **Business-Grade Parallelism**: Rayon-backed parallel processing for maximum throughput
 
 ### ⚡ Performance-Oriented Architecture
+
 - **IndexedReader**: Random access with efficient blob indexing
 - **Streaming**: Memory-efficient processing of planet-scale datasets
 - **Low-Level Control**: Direct blob access for custom processing pipelines
 
 ### 🏗️ Robust Foundation
+
 - **Binary Data Handling**: Native support for PBF compression (zlib, lzma, bzip2)
 - **Error Handling**: Comprehensive error types with detailed context
 - **Extensible Design**: Pluggable for any `Read + Seek` source
@@ -172,7 +175,7 @@ pub enum OsmElement {
 
 ## Architecture
 
-```
+```sh
 osm-pbf/
 ├── io/
 │   ├── reader.rs          # High-level API

@@ -1,5 +1,6 @@
 use bytes::Bytes;
 use thiserror::Error;
+use std::str::FromStr;
 
 /// Maximum size for a BlobHeader: 64 KiB (65,536 bytes)
 pub const MAX_BLOB_HEADER_SIZE: usize = 65_536;
@@ -42,16 +43,19 @@ pub enum BlobType {
     Unknown(String),
 }
 
-impl BlobType {
-    /// Creates a BlobType from a string identifier
-    pub fn from_str(s: &str) -> Self {
-        match s {
+impl FromStr for BlobType {
+    type Err = ();
+
+    fn from_str(s: &str) -> std::result::Result< BlobType, ()> {
+        Ok(match s {
             "OSMHeader" => BlobType::OSMHeader,
             "OSMData" => BlobType::OSMData,
             other => BlobType::Unknown(other.to_string()),
-        }
+        })
     }
-    
+}
+
+impl BlobType {
     /// Returns the string identifier for this BlobType
     pub fn as_str(&self) -> &str {
         match self {
@@ -220,9 +224,10 @@ mod tests {
     
     #[test]
     fn test_blob_type_conversion() {
-        assert_eq!(BlobType::from_str("OSMHeader"), BlobType::OSMHeader);
-        assert_eq!(BlobType::from_str("OSMData"), BlobType::OSMData);
-        assert_eq!(BlobType::from_str("Custom"), BlobType::Unknown("Custom".to_string()));
+        use std::str::FromStr;
+        assert_eq!(BlobType::from_str("OSMHeader").unwrap(), BlobType::OSMHeader);
+        assert_eq!(BlobType::from_str("OSMData").unwrap(), BlobType::OSMData);
+        assert_eq!(BlobType::from_str("Custom").unwrap(), BlobType::Unknown("Custom".to_string()));
         
         assert_eq!(BlobType::OSMHeader.as_str(), "OSMHeader");
         assert_eq!(BlobType::OSMData.as_str(), "OSMData");

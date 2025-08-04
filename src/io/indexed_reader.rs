@@ -166,7 +166,7 @@ impl<R: Read + Seek> IndexedReader<R> {
                 Ok(None) => break, // End of file
                 Err(e) => {
                     // For robust error handling, log the error but continue if possible
-                    eprintln!("Warning: Error reading blob at offset {}: {}", current_offset, e);
+                    eprintln!("Warning: Error reading blob at offset {current_offset}: {e}");
                     break;
                 }
             }
@@ -217,7 +217,7 @@ impl<R: Read + Seek> IndexedReader<R> {
     /// Read a specific blob by its index
     pub fn read_blob_by_index(&mut self, index: usize) -> Result<Option<Blob>> {
         let blob_index = self.blob_index.get(index).ok_or_else(|| {
-            BlobError::InvalidFormat(format!("Blob index {} out of range", index))
+            BlobError::InvalidFormat(format!("Blob index {index} out of range"))
         })?;
         
         self.read_blob_at_offset(blob_index.offset)
@@ -253,7 +253,7 @@ impl<R: Read + Seek> IndexedReader<R> {
     }
     
     /// Stream blobs that match the given filter
-    pub fn stream_filtered(&mut self, filter: &ElementFilter) -> FilteredBlobIterator<R> {
+    pub fn stream_filtered(&'_ mut self, filter: &ElementFilter) -> FilteredBlobIterator<'_, R> {
         FilteredBlobIterator::new(self, filter)
     }
     
@@ -329,14 +329,11 @@ impl<'a, R: Read + Seek> Iterator for FilteredBlobIterator<'a, R> {
             let should_include = match blob_index.blob_type {
                 BlobType::OSMHeader => true, // Always include headers
                 BlobType::OSMData => {
-                    // Check if this blob might contain elements we're interested in
-                    let has_relevant_elements = 
-                        (self.filter.include_nodes && blob_index.element_counts.nodes > 0) ||
+                    // Check if this blob might contain elements we're interested in 
+                    (self.filter.include_nodes && blob_index.element_counts.nodes > 0) ||
                         (self.filter.include_ways && blob_index.element_counts.ways > 0) ||
                         (self.filter.include_relations && blob_index.element_counts.relations > 0) ||
-                        (self.filter.include_changesets && blob_index.element_counts.changesets > 0);
-                    
-                    has_relevant_elements
+                        (self.filter.include_changesets && blob_index.element_counts.changesets > 0)
                 }
                 BlobType::Unknown(_) => false, // Skip unknown types by default
             };
